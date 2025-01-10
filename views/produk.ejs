@@ -8,8 +8,23 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
         </div>
     </form>
-    <div id="productList" class="row row-cols-1 row-cols-md-3 g-4">
-    </div>
+
+    <!-- Tabel untuk menampilkan produk -->
+    <table class="table table-bordered" id="productTable">
+        <thead>
+            <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Image</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="productList">
+            <!-- Data produk akan dimasukkan ke dalam tabel ini -->
+        </tbody>
+    </table>
+
     <div id="addProductModal" class="modal fade" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -102,24 +117,21 @@
         // Menghapus semua produk yang lama di DOM
         productListContainer.innerHTML = '';
 
-        // Loop untuk menampilkan produk satu per satu
+        // Loop untuk menampilkan produk dalam tabel
         produk.forEach(product => {
-            const productCard = document.createElement('div');
-            productCard.classList.add('col', 'product-card');
-            productCard.setAttribute('data-id', product.id_produk);
-            productCard.innerHTML = `
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.nama_produk}</h5>
-                        <p class="card-text">${product.deskripsi}</p>
-                        <p class="card-price">${product.harga}</p>
-                        ${product.image_url ? `<img src="${product.image_url}" alt="Product Image" width="50" height="50" class="ml-2" />` : ''}
-                        <button class="btn btn-sm btn-success editBtn" data-id="${product.id_produk}">Edit</button>
-                        <button class="btn btn-sm btn-danger deleteBtn" data-id="${product.id_produk}">Delete</button>
-                    </div>
-                </div>
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', product.id_produk);
+            row.innerHTML = `
+                <td>${product.nama_produk}</td>
+                <td>${product.deskripsi}</td>
+                <td>${product.harga}</td>
+                <td>${product.image_url ? `<img src="${product.image_url}" alt="Product Image" width="50" height="50" />` : ''}</td>
+                <td>
+                    <button class="btn btn-sm btn-success editBtn" data-id="${product.id_produk}">Edit</button>
+                    <button class="btn btn-sm btn-danger deleteBtn" data-id="${product.id_produk}">Delete</button>
+                </td>
             `;
-            productListContainer.appendChild(productCard);
+            productListContainer.appendChild(row);
         });
 
         // Pasang event listener untuk tombol Edit dan Delete
@@ -160,69 +172,60 @@
                 });
             });
         });
-
-        // Set scroll ke bagian bawah ketika produk baru ditambahkan
-        const container = document.getElementById('productList');
-        container.scrollTop = container.scrollHeight;
     }
 
-   // Form untuk menambah produk
-$('#addProductFormModal').on('submit', function (e) {
-    e.preventDefault();
-    const newProductName = $('#newProductName').val().trim();
-    const newProductDescription = $('#newProductDescription').val().trim();
-    const newProductPrice = $('#newProductPrice').val().trim();
-    if (!newProductName || !newProductDescription || !newProductPrice) return;
+    // Form untuk menambah produk
+    $('#addProductFormModal').on('submit', function (e) {
+        e.preventDefault();
+        const newProductName = $('#newProductName').val().trim();
+        const newProductDescription = $('#newProductDescription').val().trim();
+        const newProductPrice = $('#newProductPrice').val().trim();
+        if (!newProductName || !newProductDescription || !newProductPrice) return;
 
-    const image = $('#newProductImage')[0].files[0];
-    const formData = new FormData();
-    formData.append('nama_produk', newProductName);
-    formData.append('deskripsi', newProductDescription);
-    formData.append('harga', newProductPrice);
-    if (image) formData.append('image', image);
+        const image = $('#newProductImage')[0].files[0];
+        const formData = new FormData();
+        formData.append('nama_produk', newProductName);
+        formData.append('deskripsi', newProductDescription);
+        formData.append('harga', newProductPrice);
+        if (image) formData.append('image', image);
 
-    $.ajax({
-        url: '/produk',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (newProduct) {
-            // Menambahkan produk baru ke array produk
-            produk.push(newProduct);
-            
-            // Menambahkan elemen baru ke dalam DOM tanpa merender ulang semua produk
-            const productCard = document.createElement('div');
-            productCard.classList.add('col', 'product-card');
-            productCard.setAttribute('data-id', newProduct.id_produk);
-            productCard.innerHTML = `
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">${newProduct.nama_produk}</h5>
-                        <p class="card-text">${newProduct.deskripsi}</p>
-                        <p class="card-price">${newProduct.harga}</p>
-                        ${newProduct.image_url ? `<img src="${newProduct.image_url}" alt="Product Image" width="50" height="50" class="ml-2" />` : ''}
+        $.ajax({
+            url: '/produk',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (newProduct) {
+                produk.push(newProduct);
+
+                // Menambahkan elemen baru ke dalam tabel
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', newProduct.id_produk);
+                row.innerHTML = `
+                    <td>${newProduct.nama_produk}</td>
+                    <td>${newProduct.deskripsi}</td>
+                    <td>${newProduct.harga}</td>
+                    <td>${newProduct.image_url ? `<img src="${newProduct.image_url}" alt="Product Image" width="50" height="50" />` : ''}</td>
+                    <td>
                         <button class="btn btn-sm btn-success editBtn" data-id="${newProduct.id_produk}">Edit</button>
                         <button class="btn btn-sm btn-danger deleteBtn" data-id="${newProduct.id_produk}">Delete</button>
-                    </div>
-                </div>
-            `;
-            productListContainer.appendChild(productCard);
+                    </td>
+                `;
+                productListContainer.appendChild(row);
 
-            // Reset form dan tutup modal
-            $('#addProductModal').modal('hide');
-            $('.modal-backdrop').remove();
-            $('#addProductFormModal')[0].reset();
-            fileInputContainer.style.display = 'none';
-            renderproduk();
-            addProductModal.hide();
-            $('.modal-backdrop').remove();
-        },
-        error: function (error) {
-            console.error("Error adding product:", error.responseText);
-        }
+                $('#addProductModal').modal('hide');
+                $('.modal-backdrop').remove();
+                $('#addProductFormModal')[0].reset();
+                fileInputContainer.style.display = 'none';
+                renderproduk();
+                addProductModal.hide();
+                $('.modal-backdrop').remove();
+            },
+            error: function (error) {
+                console.error("Error adding product:", error.responseText);
+            }
+        });
     });
-});
 
     // Form untuk mengedit produk
     $('#editProductForm').on('submit', function (e) {
@@ -248,7 +251,6 @@ $('#addProductFormModal').on('submit', function (e) {
             processData: false,
             contentType: false,
             success: function (updatedProduct) {
-                // Memperbarui data produk dalam array
                 const product = produk.find(p => p.id_produk == currentEditId);
                 product.nama_produk = updatedProduct.nama_produk;
                 product.deskripsi = updatedProduct.deskripsi;
