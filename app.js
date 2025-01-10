@@ -38,11 +38,7 @@ app.use('/produk', produkRoutes);
 app.set('view engine', 'ejs');
 
 
-app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', {
-        layout: 'layouts/main-layout'
-    });
-});
+
 
 app.get('/', (req, res) => {
     db.query('SELECT * FROM produk', (err, produk) => {
@@ -59,7 +55,11 @@ app.get('/tentang-view', (req, res) => {
     }); 
 });
   
-
+app.get('/index', isAuthenticated, (req, res) => {
+    res.render('index', {
+        layout: 'layouts/main-layout'
+    });
+});
 app.get('/produk-view', isAuthenticated, (req, res) => {
     db.query('SELECT * FROM produk', (err, produk) => {
         if (err) return res.status(500).send('Internal Server Error');

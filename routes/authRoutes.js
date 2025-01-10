@@ -24,7 +24,7 @@ router.get('/signup', (req, res) => {
     });
 });
 
-// Route Login
+// Route Login// Route Login
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -38,10 +38,13 @@ router.post('/login', (req, res) => {
 
             // Simpan userId dalam sesi setelah login berhasil
             req.session.userId = results[0].id;
-            res.redirect('/'); // Arahkan ke halaman utama setelah login
+
+            // Redirect to the homepage (index) after successful login
+            res.redirect('/index'); // Redirect to the homepage
         });
     });
 });
+
 
 // Route untuk menampilkan form login
 router.get('/login', (req, res) => {
