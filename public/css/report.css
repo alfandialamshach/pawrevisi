@@ -32,6 +32,40 @@ header nav a:hover {
 
 /* Main Section */
 
+/* Style the nav container */
+nav {
+  
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px; /* Space below the nav */
+}
+
+/* Style the button */
+nav button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green color */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+  background-color: #45a049; /* Darker green */
+  transform: scale(1.05); /* Slightly increase the button size */
+}
+
+
+
+/* Optional: Add a focus effect for accessibility */
+nav button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(72, 133, 237, 0.6);
+}
+
 /* Modal Styling */
 .modal {
   display: none;
@@ -161,9 +195,9 @@ table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-table tr:hover {
+/* table tr:hover {
   background-color: #f1f1f1;
-}
+} */
 
 /* Footer */
 footer {
