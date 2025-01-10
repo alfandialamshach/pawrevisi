@@ -152,8 +152,10 @@ body {
 }
 
 .card img {
-    max-width: 100%;
-    height: auto;
+    /* max-width: 100%;
+    height: auto; */
+    width: 125px;
+    height: 125px;
     margin-top: 10px;
     border-radius: 8px;
 }
